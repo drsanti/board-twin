@@ -1,0 +1,16 @@
+[package]
+name = "board-twin-app"
+version = "0.1.0"
+edition = "2021"
+description = "board-twin desktop shell"
+
+# own workspace — intentionally NOT a member of the repo root workspace
+[workspace]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde_json = "1"
+boardtwin-broker = { path = "../broker" }

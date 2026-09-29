@@ -1,0 +1,17 @@
+[package]
+name = "boardtwin-broker"
+version = "0.1.0"
+edition = "2021"
+description = "Virtual board broker — simlink TCP server + WS/JSON API"
+
+[lib]
+name = "boardtwin_broker"
+path = "src/lib.rs"
+
+[[bin]]
+name = "board-twin"
+path = "src/bin/board-twin.rs"
+
+[dependencies]
+tungstenite = "0.24"
+serde_json = "1"

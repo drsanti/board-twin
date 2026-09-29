@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>board-twin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { color-scheme: dark; }
+  body { font-family: system-ui, sans-serif; background: #11151c;
+         color: #dfe6ee; margin: 0; padding: 24px; }
+  h1 { font-size: 18px; font-weight: 600; color: #7dd3a8; }
+  .board { display: flex; gap: 32px; flex-wrap: wrap; margin-top: 16px; }
+  .group { background: #1a2230; border: 1px solid #2b3a4f;
+           border-radius: 10px; padding: 16px; min-width: 180px; }
+  .group h2 { font-size: 12px; text-transform: uppercase;
+              letter-spacing: .08em; color: #8aa0b8; margin: 0 0 12px; }
+  .led { width: 36px; height: 36px; border-radius: 50%;
+         background: #25303f; border: 2px solid #31415a;
+         display: inline-block; margin-right: 10px; transition: .08s; }
+  .led.on { background: #22c55e; border-color: #4ade80;
+            box-shadow: 0 0 14px #22c55e88; }
+  button.btn { width: 64px; height: 36px; border-radius: 8px;
+               border: 2px solid #31415a; background: #25303f;
+               color: #dfe6ee; cursor: pointer; margin-right: 8px;
+               font-weight: 600; }
+  button.btn:active { background: #f59e0b; color: #111; }
+  .adc-row { display: flex; align-items: center; gap: 10px; }
+  input[type=range] { width: 140px; }
+  .adcval { font-variant-numeric: tabular-nums; color: #7dd3a8; }
+  #log { margin-top: 20px; background: #0b0f16; border: 1px solid #2b3a4f;
+         border-radius: 10px; padding: 12px; height: 160px;
+         overflow-y: auto; font: 12px/1.5 ui-monospace, monospace;
+         white-space: pre-wrap; }
+  #status { font-size: 12px; color: #8aa0b8; }
+</style>
+</head>
+<body>
+<h1>board-twin <span id="status">connecting…</span></h1>
+<div class="board">
+  <div class="group"><h2>LEDs</h2><div id="leds"></div></div>
+  <div class="group"><h2>Buttons</h2><div id="btns"></div></div>
+  <div class="group"><h2>ADC</h2><div id="adcs"></div></div>
+</div>
+<div id="log"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const log = m => { const el = $("#log"); el.textContent += m + "\n";
+                   el.scrollTop = el.scrollHeight; };
+
+const ws = new WebSocket(`ws://${location.host}`);
+let board = null;
+
+ws.onopen    = () => $("#status").textContent = "connected";
+ws.onclose   = () => $("#status").textContent = "disconnected";
+ws.onmessage = e => { const m = JSON.parse(e.data); handle(m); };
+
+function send(o) { ws.send(JSON.stringify(o)); }
+
+function handle(m) {
+  if (m.kind === "hello") {
+    board = m.board; render();
+    Object.entries(m.state || {}).forEach(([k, v]) => {
+      const [dev, id] = k.split("/");
+      applySet({dev, id: +id, value: v});
+    });
+    log("hello boardtwin/" + m.version);
+  } else if (m.kind === "board") {
+    board = m.board; render();
+    log("board updated");
+  } else if (m.kind === "rst") {
+    document.querySelectorAll(".led").forEach(e => e.classList.remove("on"));
+    log("reset");
+  } else if (m.kind === "set") {
+    applySet(m);
+    log(`set ${m.dev}/${m.id} = ${m.value}`);
+  } else if (m.kind === "evt") {
+    flashBtn(m.id);
+    log(`evt ${m.dev}/${m.id} ${m.name}`);
+  } else if (m.kind === "uart") {
+    log("uart> " + m.text);
+  }
+}
+
+function applySet(m) {
+  if (m.dev === "led") {
+    const el = $("#led" + m.id);
+    if (el) el.classList.toggle("on", !!m.value);
+  } else if (m.dev === "adc") {
+    const el = $("#adcv" + m.id);
+    if (el) el.textContent = m.value;
+  }
+}
+
+function render() {
+  $("#leds").innerHTML = (board.leds || [])
+    .map(i => `<span class="led" id="led${i}" title="LED ${i}"></span>`).join("");
+
+  $("#btns").innerHTML = (board.buttons || [])
+    .map(i => `<button class="btn" id="btn${i}"
+        onmousedown="btn(${i},'press')" onmouseup="btn(${i},'release')"
+        onmouseleave="btn(${i},'release')">B${i}</button>`).join("");
+
+  $("#adcs").innerHTML = (board.adcs || [])
+    .map(i => `<div class="adc-row">
+        <input type="range" min="0" max="3300" value="0" id="adc${i}">
+        <span class="adcval" id="adcv${i}">0</span> mV</div>`).join("");
+  (board.adcs || []).forEach(i =>
+    $("#adc" + i).oninput = e =>
+      send({kind:"set", dev:"adc", id:i, value:+e.target.value}));
+}
+
+function btn(i, what) {
+  send({kind:"evt", dev:"btn", id:i, name:what});
+}
+function flashBtn(i) {
+  const el = $("#btn" + i);
+  if (el) { el.style.background = "#f59e0b";
+            setTimeout(() => el.style.background = "", 120); }
+}
+</script>
+</body>
+</html>

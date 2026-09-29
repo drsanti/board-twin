@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationMap": true,
+    "skipLibCheck": true,
+    "strict": false
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

@@ -1,0 +1,15 @@
+node_modules/
+dist/
+target/
+src-tauri/target/
+src-tauri/gen/
+
+# vendored TRN packages ship their prebuilt dist/ for CI
+!vendor/**/dist/
+
+# the local client package's dist/ is committed too (exports point there)
+!client/dist/
+
+# ignore stray platform junk
+*.local
+Thumbs.db

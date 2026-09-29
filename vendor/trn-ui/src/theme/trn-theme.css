@@ -1,0 +1,31 @@
+/**
+ * TRN dark theme tokens — import with Tailwind 4 `@import` in consumer app.css.
+ */
+@theme {
+  --color-bg-main: #18181b;
+  --color-bg-panel: #18181b;
+  --color-bg-header: #202023;
+  --color-workbench-chrome-border: #2d2d32;
+  --color-accent-blue: #3b82f6;
+  --color-text-main: #f4f4f5;
+  --color-text-dim: #71717a;
+  --color-text-muted: #a1a1aa;
+  --color-text-primary: #f4f4f5;
+  --color-text-secondary: #a1a1aa;
+  --color-text-tertiary: #71717a;
+
+  --text-muted: #a1a1aa;
+  --text-dim: #71717a;
+}
+
+.text-primary {
+  color: var(--color-text-primary, var(--color-text-main));
+}
+
+.text-secondary {
+  color: var(--color-text-secondary, var(--color-text-muted));
+}
+
+.text-tertiary {
+  color: var(--color-text-tertiary, var(--color-text-dim));
+}

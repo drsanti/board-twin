@@ -1,0 +1,66 @@
+/**
+ * Workbench chrome — plain CSS so pane resize affordances work without Tailwind scanning this package.
+ */
+
+.trn-splitter__track {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  transition: background-color 150ms ease;
+  background-color: color-mix(
+    in srgb,
+    var(--color-workbench-chrome-border, #2a2a2e) 55%,
+    transparent
+  );
+}
+
+.trn-splitter__track--active {
+  background-color: color-mix(
+    in srgb,
+    var(--color-accent-blue, #3b82f6) 30%,
+    transparent
+  );
+}
+
+.trn-splitter__line {
+  pointer-events: none;
+  position: absolute;
+  transition:
+    width 150ms ease,
+    height 150ms ease,
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+  background-color: rgba(255, 255, 255, 0.22);
+}
+
+/* Horizontal split → vertical gutter line */
+.trn-splitter--horizontal .trn-splitter__line {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+}
+
+.trn-splitter--horizontal .trn-splitter__line--active {
+  width: 3px;
+  background-color: var(--color-accent-blue, #3b82f6);
+  box-shadow: 0 0 12px
+    color-mix(in srgb, var(--color-accent-blue, #3b82f6) 60%, transparent);
+}
+
+/* Vertical split → horizontal gutter line */
+.trn-splitter--vertical .trn-splitter__line {
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 1px;
+}
+
+.trn-splitter--vertical .trn-splitter__line--active {
+  height: 3px;
+  background-color: var(--color-accent-blue, #3b82f6);
+  box-shadow: 0 0 12px
+    color-mix(in srgb, var(--color-accent-blue, #3b82f6) 60%, transparent);
+}

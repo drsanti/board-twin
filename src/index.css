@@ -1,0 +1,181 @@
+@import "tailwindcss";
+@import "@ternion/trn-ui/styles.css";
+@import "@ternion/trn-workbench/styles.css";
+
+/* trn packages ship tokens only — generate their utility classes here
+   (same pattern as Bitstream-Studio extension/src/webview/app.css) */
+@source "../../../../../../Bitstream-Studio/packages/trn-ui/src/**/*.{ts,tsx}";
+@source "../../../../../../Bitstream-Studio/packages/trn-workbench/src/**/*.{ts,tsx}";
+
+@theme {
+  --font-silk: ui-monospace, "Cascadia Mono", "SF Mono", Consolas, monospace;
+}
+
+/* ------------------------------------------------------------------ */
+/* board-twin — bench theme: near-black zinc (ByteFlow/TRN palette)    */
+/*                                                                     */
+/* Chrome consumes --bt-* tokens; Ctrl+Shift+F1 overrides them live.   */
+/* Hardware colours (LED lens, seg7 red) are physical — not themed.    */
+/* ------------------------------------------------------------------ */
+:root {
+  /* surfaces — near-black zinc, no blue/green tint */
+  --bt-bg: #121214;
+  --bt-panel: #18181b;
+  --bt-panel-2: #202023;
+  --bt-canvas: #0a0a0b;
+  --bt-field: #141416;
+
+  /* chrome */
+  --bt-line: #2d2d32;
+  --bt-hover: #1f1f22;
+  --bt-selected: #27272a;
+
+  /* type ladder */
+  --bt-text: #f4f4f5;
+  --bt-muted: #a1a1aa;
+  --bt-faint: #71717a;
+
+  /* sparse accent — CTA / live marker only */
+  --bt-accent: #3b82f6;
+  --bt-accent-strong: #2563eb;
+  --bt-accent-soft: #60a5fa;
+
+  /* desaturated status — true status only */
+  --bt-success: #5a8f4a;
+  --bt-warning: #b8944a;
+  --bt-danger: #b85a5a;
+
+  /* terminal / value text (brighter variants for legibility) */
+  --bt-live: #7ab5ec;
+  --bt-ok: #86b576;
+  --bt-warn: #d4b06a;
+  --bt-err: #d98383;
+}
+
+@theme inline {
+  --color-bt-bg: var(--bt-bg);
+  --color-bt-panel: var(--bt-panel);
+  --color-bt-panel-2: var(--bt-panel-2);
+  --color-bt-canvas: var(--bt-canvas);
+  --color-bt-field: var(--bt-field);
+  --color-bt-line: var(--bt-line);
+  --color-bt-hover: var(--bt-hover);
+  --color-bt-selected: var(--bt-selected);
+  --color-bt-text: var(--bt-text);
+  --color-bt-muted: var(--bt-muted);
+  --color-bt-faint: var(--bt-faint);
+  --color-bt-accent: var(--bt-accent);
+  --color-bt-accent-strong: var(--bt-accent-strong);
+  --color-bt-accent-soft: var(--bt-accent-soft);
+  --color-bt-success: var(--bt-success);
+  --color-bt-warning: var(--bt-warning);
+  --color-bt-danger: var(--bt-danger);
+  --color-bt-live: var(--bt-live);
+  --color-bt-ok: var(--bt-ok);
+  --color-bt-warn: var(--bt-warn);
+  --color-bt-err: var(--bt-err);
+}
+
+/* workbench mat behind the board: neutral vignette + fine dot grid */
+.bt-bench {
+  background:
+    radial-gradient(120% 90% at 50% -5%, rgba(96, 125, 160, 0.10), transparent 55%),
+    radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1.6px) 0 0 / 26px 26px,
+    linear-gradient(180deg, var(--bt-bg) 0%, var(--bt-canvas) 60%, #060608 100%);
+  background-color: var(--bt-canvas);
+}
+
+/* silkscreen label (uppercase mono) */
+.bt-silk {
+  font-family: var(--font-silk);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(224, 226, 232, 0.40);
+}
+
+/* dim the live area while no simulator is attached */
+.bt-idle {
+  opacity: 0.35;
+  filter: grayscale(0.7) brightness(0.8);
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}
+
+/* slow blink for link / status indicators */
+@keyframes bt-link-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+.bt-link-blink {
+  animation: bt-link-pulse 1.6s ease-in-out infinite;
+}
+
+/* soft power flicker for the OLED-style uart display */
+@keyframes bt-oled-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  94% {
+    opacity: 0.82;
+  }
+  96% {
+    opacity: 1;
+  }
+}
+.bt-oled {
+  animation: bt-oled-flicker 6s linear infinite;
+}
+
+/* scrollable but no visible scrollbar (event log, serial term, board) */
+.bt-scroll {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* legacy Edge/IE */
+}
+.bt-scroll::-webkit-scrollbar {
+  display: none;                /* WebView2 / Chrome */
+}
+
+/* trn's zinc-700 borders read as "white" against the bench theme —
+ * dim them to the white/10 used everywhere else. Unlayered CSS beats
+ * trn's prebuilt utilities only via !important. */
+.border-zinc-700\/80 {
+  border-color: rgba(255, 255, 255, 0.10) !important;
+}
+.border-zinc-700 {
+  border-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+/* trn's cyan accents → bt accent blue */
+.bg-cyan-500\/20,
+.bg-cyan-500\/15 {
+  background-color: color-mix(in srgb, var(--bt-accent) 16%, transparent) !important;
+}
+.ring-cyan-400\/90,
+.ring-cyan-400\/50 {
+  --tw-ring-color: color-mix(in srgb, var(--bt-accent) 55%, transparent) !important;
+}
+.hover\:text-cyan-300:hover,
+.text-cyan-300 {
+  color: var(--bt-accent-soft) !important;
+}
+
+/* TRNRangeSlider emerald thumb → bt accent */
+input[type="range"]::-webkit-slider-thumb {
+  background-color: var(--bt-accent) !important;
+  border-color: var(--bt-accent-soft) !important;
+}
+input[type="range"]::-moz-range-thumb {
+  background-color: var(--bt-accent) !important;
+  border-color: var(--bt-accent-soft) !important;
+}
+input[type="range"] {
+  accent-color: var(--bt-accent) !important;
+}

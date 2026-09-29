@@ -1,0 +1,46 @@
+{
+  "name": "@ternion/trn-workbench",
+  "version": "0.1.0",
+  "description": "TERNION tiling workbench layout engine and chrome for React apps",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup && node scripts/bundle-styles.mjs",
+    "dev": "tsup --watch",
+    "test": "npx tsx --test --test-force-exit tests/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "@ternion/trn-ui": "file:../trn-ui",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.546.0",
+    "tailwind-merge": "^3.3.1",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "tsup": "^8.5.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.6.3"
+  }
+}
