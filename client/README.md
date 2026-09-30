@@ -1,4 +1,4 @@
-# board-twin-client
+# @ternion/board-twin-client
 
 Typed TypeScript client for the **board-twin** live-data broker
 (`ws://127.0.0.1:7392`). Use it to build web apps that read the simulated
@@ -8,10 +8,20 @@ drive inputs back into the FreeRTOS simulator.
 Works in browsers and Node ≥ 22 (both have a global `WebSocket`); an
 implementation can be injected for older runtimes.
 
+## Install
+
+From GitHub (no npm publish yet — `dist/` is committed, no build needed):
+
+```bash
+npm install drsanti/board-twin-client
+# pin a release:
+npm install drsanti/board-twin-client#v0.1.0
+```
+
 ## Usage
 
 ```ts
-import { BoardTwinClient } from "board-twin-client";
+import { BoardTwinClient } from "@ternion/board-twin-client";
 
 const board = new BoardTwinClient("ws://127.0.0.1:7392");
 
